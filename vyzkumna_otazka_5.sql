@@ -15,7 +15,7 @@ lag (avg (value)) over (order by (payroll_year)) as prumer_mzda_loni,
 (round (avg (value)) - lag (avg (value)) over (order by (payroll_year))) as rozdilmezd,
 round(((avg (value)-lag (avg (value)) over (order by (payroll_year)))/lag (avg (value)) over (order by (payroll_year)) * 100)::numeric, 2) as procenta_mzdy
 from czechia_payroll cp 
-where value_type_code = 5958 and calculation_code = 200 
+where value_type_code = 5958 and calculation_code = 100 
 group by payroll_year
 order by payroll_year 
 ), potraviny as
