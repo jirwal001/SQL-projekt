@@ -1,7 +1,8 @@
 ----- Má výška HDP vliv na změny ve mzdách a cenách potravin? Neboli, pokud HDP vzroste výrazněji v jednom roce, projeví se to na cenách potravin či mzdách ve stejném nebo následujícím roce výraznějším růstem?
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
+----- z dat lze vidět pozitivní korelaci mezi GDP a mzdami, mzdy ve většine let reagují na GDP, vyšší GDP obykle znamená vyšší růst mezd, pokud klesne GDP, poklesne v následujícím období(roce) i růst mezd
+----- závislost cen potravin na GDP není jednoznačná, mezi lety 2007-2011 lze vidět pozitvní korelaci, ale v letech 2012-2016 negativní, s klesajícím GDP nejprve rostou ceny portavin ale následně se 
+----- zvyšujícím se GDP snižující se ceny potravin  
 
 create temporary table tmp_5 as
 with mzdy as(   
