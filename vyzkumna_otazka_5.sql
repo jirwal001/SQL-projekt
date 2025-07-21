@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----- Data vypovídají o pozitivní korelaci mezi GDP a mzdami. Mzdy ve většině let reagují na GDP (kromě roků 2009-2010, 2013-2014). Vyšší GDP obvykle znamená vyšší růst mezd v roce následujícím. Pokud klesne GDP, poklesne v následujícím roce i růst mezd.
 ----- Závislost cen potravin na GDP není jednoznačná, mezi lety 2007 až 2011 lze vidět pozitivní korelaci, ale v letech 2012 až 2016 negativní. S klesajícím GDP nejprve rostou ceny potravin a následně se zvyšujícím se GDP ceny potravin klesají.
------ Data o mzdách jsou k dispozici za roky 2000 až 2021, data o potravinách za roky 2006 až 2018 a ekonomické údaje státu (ČR) za roky 1990 až 2020. Srovnávané období je tedy 2007 až 2018. Rok 2006 nelze srovnat, nejsou k dispozici kompletní data – chybí data o cenách potravin za předchozí rok 2005.
+----- Data o mzdách jsou k dispozici za roky 2000 až 2021, data o potravinách za roky 2006 až 2018 a ekonomické údaje státu (ČR) za roky 1990 až 2020. Srovnávané období je tedy 2007 až 2018. Rok 2006 nelze srovnat, nejsou k dispozici data o cenách potravin za předchozí rok.
 
 create temporary table tmp_5 as
 with mzdy as(   
