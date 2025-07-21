@@ -1,10 +1,9 @@
 ----- Existuje rok, ve kterém byl meziroční nárůst cen potravin výrazně vyšší než růst mezd (větší než 10 %)?
 -------------------------------------------------------------------------------------------------------------
------ neexistuje, v roce 2017 ceny potravin sice dosáhly téměř 10% růstu, ale růst mezd nebyl výrazně nižší (6,43 %)
------ největší procentualní rozdíl mezi mzdami a cenami potravin byl v roce 2009, potraviny klesly o 6,8 % a mzdy vzrostly o 3,25 % (nejde zde však o růst cen potravin) 
------ rok 2006 nelze srovnat, nemáme k dispozici kompletní data, chybí data o cenách potravin za předchozí rok 2005 
------ data o mzdách jsou k dispozici za roky 2000-2021
------ data o potravinách jsou k dispozici za roky 2006-2018
+----- Neexistuje. V roce 2017 ceny potravin sice dosáhly téměř 10% růstu (9,98 %), ale růst mezd nebyl výrazně nižší (6,43 %).
+----- Největší procentuální rozdíl mezi mzdami a cenami potravin byl v roce 2009. Potraviny klesly o 6,8 % a mzdy vzrostly o 3,25 % (nejde zde však o růst cen potravin). 
+----- Data o mzdách jsou k dispozici za roky 2000 až 2021 a data o potravinách za roky 2006 až 2018. Srovnávané období je tedy 2007 až 2018.
+----- Rok 2006 nelze srovnat, nejsou k dispozici kompletní data – chybí data o cenách potravin za předchozí rok 2005. 
 
 with mzdy as(   
 select 
