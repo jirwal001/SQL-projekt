@@ -3,6 +3,7 @@
 ----- I přes poklesy mezd v některých letech v některých odvětvích je ve všech odvětvích trend rostoucí.
 ----- Odvětví S(Ostatní činnosti), N(Administrativní a podpůrné činnosti), H(Doprava a skladování), Q(Zdravotní a sociální péče) rostly ve všech sledovaných letech.
 ----- Nejvíce poklesů mezd zaznamenaly odvětví: B (Těžba a dobývání) 4, a odvětvím: O (Veřejná správa a obrana; povinné sociální zabezpečení), R (Kulturní, zábavní a rekreační činnosti), I (Ubytování, stravování a pohostinství) poklesla mzda 3x
+----- Data se mzdami jsou k dispozici za roky 2000 až 2021.
 
 with porovnani_mezd_1 as( 
 select 
