@@ -5,6 +5,36 @@
 ----- Data s cenami produktů jsou k dispozici za roky 2006 až 2018.
 ----- Kategorie (212101) Jakostní víno bílé má dostupná data pouze za roky 2015 až 2018 a není uvedena ve výsledné tabulce.
 
+with tabulka_potravin as
+(
+	select 
+		year,
+		category_code,
+		round(avg (value)::numeric, 2) as prumer,
+		round(lag (avg (value)) over (partition by category_code order by category_code)::numeric, 2) as prumer_predchozi,
+		avg(value) - lag(avg (value)) over (partition by category_code order by category_code, year) as rozdil_prumeru,
+		(avg(value) - lag(avg (value)) over (partition by category_code order by category_code, year)) / lag(avg (value)) over (partition by category_code order by category_code, year) * 100 as procenta
+from t_jiri_waloschek_projekt_sql_primary_final 
+group by category_code, year
+having year in (2006, 2018)
+order by category_code, year asc
+)
+select
+	category_code as kategorie_potravin,
+	round(procenta::numeric, 2) as procento_zdrazeni
+from tabulka_potravin
+where procenta is not null
+group by category_code, procenta 
+order by round(procenta::numeric, 0) asc
+
+
+
+
+
+--------------------------------
+SMAZAT
+
+  
 with tabulka_potravin as(
 select 
 date_part('year', date_from) as year,
