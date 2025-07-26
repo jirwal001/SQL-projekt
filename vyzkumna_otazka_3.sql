@@ -3,6 +3,7 @@
 ----- Nejpomaleji zdražuje kategorie banány žluté (116103) o 7,4 %.
 ----- Kategorie Cukr krystalový (118101) zlevnila o 27,5 %, a rajská jablka červená kulatá (117101) zlevnila o 23,1 %.
 ----- Data s cenami produktů jsou k dispozici za roky 2006 až 2018.
+----- Kategorie (212101) Jakostní víno bílé má dostupná data pouze za roky 2015 až 2018 a není uvedena ve výsledné tabulce.
 
 with tabulka_potravin as(
 select 
