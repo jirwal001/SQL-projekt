@@ -32,7 +32,7 @@ select
 	nazev_produktu as nazev_kategorie,
 	prum_cena,
 	prum_plat,
-	round((prum_plat / prum_cena)::numeric, 0) as vysledek
+	round((prum_plat / prum_cena)::numeric, 2) as vysledek
 from prum_platy pp
 join prum_ceny pc on pc.year = pp.payroll_year
 order by pc.category_code 
