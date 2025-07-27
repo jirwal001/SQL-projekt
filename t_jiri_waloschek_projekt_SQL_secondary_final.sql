@@ -8,7 +8,7 @@ with hdp as
 		lag(gdp) over (order by (year)),
 		round(((gdp - (lag(gdp) over (order by year asc)))/(lag(gdp) over (order by year asc)) * 100)::numeric, 6) as vyvoj_gdp_proc
 	from economies e 
+	where country = 'Czech Republic'
 	group by year, country, gdp
-	having country = 'Czech Republic'
 )
 select * from hdp
