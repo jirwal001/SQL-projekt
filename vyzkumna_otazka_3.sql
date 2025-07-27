@@ -10,48 +10,21 @@ with tabulka_potravin as
 	select 
 		year,
 		category_code,
+		nazev_produktu,
 		round(avg (value)::numeric, 2) as prumer,
 		round(lag (avg (value)) over (partition by category_code order by category_code)::numeric, 2) as prumer_predchozi,
 		avg(value) - lag(avg (value)) over (partition by category_code order by category_code, year) as rozdil_prumeru,
 		(avg(value) - lag(avg (value)) over (partition by category_code order by category_code, year)) / lag(avg (value)) over (partition by category_code order by category_code, year) * 100 as procenta
-from t_jiri_waloschek_projekt_sql_primary_final 
-group by category_code, year
-having year in (2006, 2018)
+from t_jiri_waloschek_projekt_sql_primary_final
+where year in (2006, 2018)
+group by category_code, year, nazev_produktu
 order by category_code, year asc
 )
 select
 	category_code as kategorie_potravin,
+	nazev_produktu as nazev_kategorie,
 	round(procenta::numeric, 2) as procento_zdrazeni
 from tabulka_potravin
 where procenta is not null
-group by category_code, procenta 
-order by round(procenta::numeric, 0) asc
-
-
-
-
-
---------------------------------
-SMAZAT
-
-  
-with tabulka_potravin as(
-select 
-date_part('year', date_from) as year,
-category_code,
-round(avg (value)::numeric, 2) as prumer,
-round(lag (avg (value)) over (partition by category_code order by category_code)::numeric, 2) as prumer_predchozi,
-avg(value) - lag(avg (value)) over (partition by category_code order by category_code, date_part('year', date_from)) as rozdil_prumeru,
-(avg(value) - lag(avg (value)) over (partition by category_code order by category_code, date_part('year', date_from))) / lag(avg (value)) over (partition by category_code order by category_code, date_part('year', date_from)) * 100 as procenta
-from czechia_price cp 
-where date_part('year', date_from) in (2006, 2018)
-group by category_code, year
-order by category_code, year asc
-)
-select
-category_code as kategorie_potravin,
-round(procenta::numeric, 2) as procento_zdrazeni
-from tabulka_potravin
-where procenta is not null
-group by category_code, procenta 
-order by round(procenta::numeric, 0) asc
+group by category_code, nazev_produktu, procenta 
+order by procenta asc
