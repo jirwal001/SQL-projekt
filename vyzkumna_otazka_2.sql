@@ -9,10 +9,11 @@ with prum_ceny as
 	select
 		year,
 		category_code,
+		nazev_produktu,
 		round(avg(value)::numeric, 2) as prum_cena
-		from t_jiri_waloschek_projekt_sql_primary_final 
-	group by year, category_code
-	having category_code IN (111301, 114201) and year in (2006, 2018)
+		from t_jiri_waloschek_projekt_sql_primary_final
+	where category_code IN (111301, 114201) and year in (2006, 2018)
+	group by year, category_code, nazev_produktu	
 	order by year
 ),
 prum_platy as 
@@ -20,49 +21,18 @@ prum_platy as
 	select
 		payroll_year,
 		avg(v1) as prum_plat
-		from t_jiri_waloschek_projekt_sql_primary_final 
+		from t_jiri_waloschek_projekt_sql_primary_final
+	where payroll_year in (2006, 2018)
 	group by payroll_year
-	having payroll_year in (2006, 2018)
 	order by payroll_year 
 )
 select 
 	year as rok,
-	category_code as produkt,
+	category_code as kategorie_potravin,
+	nazev_produktu as nazev_kategorie,
 	prum_cena,
 	prum_plat,
 	round((prum_plat / prum_cena)::numeric, 0) as vysledek
 from prum_platy pp
 join prum_ceny pc on pc.year = pp.payroll_year
 order by pc.category_code 
-
---------------------------
-  SMAZAT
-
-with PRUM_CENY as( -- PRUM CENY JSOU 2006-2018
-select
-date_part('year', date_from) as year,
-category_code,
-AVG(value) as PRUM_CENA
-from czechia_price cp 
-where category_code IN (111301, 114201) and date_part('year', date_from) in (2006, 2018)--111301 chleba, 114201 mléko
-group by year, category_code 
-order by year
-),
-PRUM_PLATY as ( --PRUM PLATY JSOU 2000 AŽ 2021
-select 
-payroll_year, 
-AVG(value) as PRUM_PLAT
-from czechia_payroll cp 
-where value_type_code = '5958' and calculation_code = '100' and payroll_year in (2006, 2018)
-group by payroll_year 
-order by payroll_year
-)
-select
-year as rok,
-CATEGORY_CODE as produkt,
-prum_cena,
-prum_plat,
-round((PRUM_PLAT / PRUM_CENA)::numeric, 2) AS VYSLEDEK
-from PRUM_PLATY PP
-join PRUM_CENY PC on PC.year = PP.PAYROLL_YEAR
-order by category_code
