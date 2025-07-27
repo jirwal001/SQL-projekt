@@ -5,10 +5,11 @@ with hdp as
 		country, 
 		year,
 		gdp,
-		lag(gdp) over (order by (year)),
-		round(((gdp - (lag(gdp) over (order by year asc)))/(lag(gdp) over (order by year asc)) * 100)::numeric, 6) as vyvoj_gdp_proc
+		gini,
+		population
 	from economies e 
-	where country = 'Czech Republic'
-	group by year, country, gdp
+	where year between 2006 and 2018
+	group by year, country, gdp, gini, population
+	order by country, year
 )
 select * from hdp
