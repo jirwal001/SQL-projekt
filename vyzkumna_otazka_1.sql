@@ -9,46 +9,23 @@ with porovnani_mezd_1 as
 (
 	select 
 		industry_branch_code,
+		name,
 		payroll_year,
 		avg (v1),
 		lag (avg (v1)) over (partition by industry_branch_code order by industry_branch_code, payroll_year) as prumerna_mzda_loni,
 		avg (v1) - lag (avg (v1)) over (partition by industry_branch_code order by payroll_year) as mezirocni_rozdil,
-			case 
-				when avg (v1) - lag (avg (v1)) over (partition by industry_branch_code order by payroll_year) > 0 then 'roste' else 'klesa'
-			end as vyvoj
-	from t_jiri_waloschek_projekt_sql_primary_final 
-	group by industry_branch_code, payroll_year 
+		case 
+			when avg (v1) - lag (avg (v1)) over (partition by industry_branch_code order by payroll_year) > 0 then 'roste' else 'klesa'
+		end as vyvoj
+	from t_jiri_waloschek_projekt_sql_primary_final
+	group by industry_branch_code, name, payroll_year
 	order by industry_branch_code, payroll_year 
 )
 select
 	industry_branch_code as odvetvi,
+	name as odvetvi_nazev,
 	count (vyvoj) as pocet_roste
 from porovnani_mezd_1
 where payroll_year between 2001 and 2021 and vyvoj = 'roste' and industry_branch_code is not null and prumerna_mzda_loni is not null
-group by industry_branch_code
-order by count(vyvoj) desc
-
------------------------
-SMAZAT
-with porovnani_mezd_1 as( 
-select 
-industry_branch_code as odvetvi, 
-payroll_year as rok, 
-avg (value) as prumerna_mzda,
-lag (avg (value)) over (partition by industry_branch_code order by industry_branch_code, payroll_year) as prumerna_mzda_loni,
-avg (value) - lag (avg (value)) over (partition by industry_branch_code order by payroll_year) as mezirocni_rozdil,
-	case 
-		when avg (value) - lag (avg (value)) over (partition by industry_branch_code order by payroll_year) > 0 then 'roste' else 'klesa'
-	end as vyvoj
-from czechia_payroll cp 
-where value_type_code = '5958' and calculation_code = '100'
-group by industry_branch_code, payroll_year  
-order by industry_branch_code, payroll_year asc
-)
-select
-odvetvi,
-count (vyvoj) as pocet_roste
-from porovnani_mezd_1
-where rok between 2001 and 2021 and vyvoj = 'roste' and odvetvi is not null and prumerna_mzda_loni is not null
-group by odvetvi
+group by industry_branch_code, name
 order by count(vyvoj) desc
