@@ -13,7 +13,6 @@ with mzdy as
 		(round (avg (v1)) - lag (avg (v1)) over (order by (payroll_year))) as rozdil_mezd,
 		round(((avg (v1)-lag (avg (v1)) over (order by (payroll_year)))/lag (avg (v1)) over (order by (payroll_year)) * 100)::numeric, 2) as procenta_mzdy
 	from t_jiri_waloschek_projekt_sql_primary_final
-	--where value_type_code = 5958 and calculation_code = 100 
 	group by payroll_year
 	order by payroll_year 
 ), potraviny as
@@ -35,6 +34,7 @@ with mzdy as
 		lag(gdp) over (order by (year)),
 		round(((gdp - (lag(gdp) over (order by year asc)))/(lag(gdp) over (order by year asc)) * 100)::numeric, 2) as vyvoj_gdp_proc
 	from t_jiri_waloschek_projekt_SQL_secondary_final
+	where country = 'Czech Republic'
 	group by year, country, gdp
 )
 	select 
