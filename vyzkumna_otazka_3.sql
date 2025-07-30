@@ -16,7 +16,7 @@ WITH categories AS
 		AVG(value) - LAG(AVG (value)) OVER (PARTITION BY category_code ORDER BY category_code, year) AS avg_difference,
 		(AVG(value) - LAG(AVG (value)) OVER (PARTITION BY category_code ORDER BY category_code, year)) / LAG(AVG (value)) OVER (PARTITION BY category_code ORDER BY category_code, year) * 100 AS percentage
 	FROM t_jiri_waloschek_projekt_sql_primary_final
-	WHERE year in (2006, 2018)
+	WHERE year IN (2006, 2018)
 	GROUP BY category_code, year, product_name
 	ORDER BY category_code, year ASC
 )
