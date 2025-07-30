@@ -12,7 +12,7 @@ WITH wage_comparison AS
 		name,
 		payroll_year,
 		AVG (v1),
-		LAG (AVG (v1)) OVER (PARTITION BY industry_branch_code ORDER BY industry_branch_code, payroll_year) as avg_wage_previous_year,
+		LAG (AVG (v1)) OVER (PARTITION BY industry_branch_code ORDER BY industry_branch_code, payroll_year) AS avg_wage_previous_year,
 		AVG (v1) - LAG (AVG (v1)) OVER (PARTITION BY industry_branch_code ORDER BY payroll_year) AS y_o_y_difference,
 		CASE 
 			WHEN AVG (v1) - LAG (AVG (v1)) OVER (PARTITION BY industry_branch_code ORDER BY payroll_year) > 0 THEN 'growth' 
