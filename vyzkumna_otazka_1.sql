@@ -5,27 +5,31 @@
 ----- Nejvíce poklesů mezd zaznamenala odvětví: B (Těžba a dobývání) 4, a odvětvím: O (Veřejná správa a obrana; povinné sociální zabezpečení), R (Kulturní, zábavní a rekreační činnosti), I (Ubytování, stravování a pohostinství) poklesla mzda 3x
 ----- Data se mzdami jsou k dispozici za roky 2000 až 2021.
 
-with porovnani_mezd_1 as 
+WITH wage_comparison AS 
 (
-	select 
+	SELECT 
 		industry_branch_code,
 		name,
 		payroll_year,
-		avg (v1),
-		lag (avg (v1)) over (partition by industry_branch_code order by industry_branch_code, payroll_year) as prumerna_mzda_loni,
-		avg (v1) - lag (avg (v1)) over (partition by industry_branch_code order by payroll_year) as mezirocni_rozdil,
-		case 
-			when avg (v1) - lag (avg (v1)) over (partition by industry_branch_code order by payroll_year) > 0 then 'roste' else 'klesa'
-		end as vyvoj
-	from t_jiri_waloschek_projekt_sql_primary_final
-	group by industry_branch_code, name, payroll_year
-	order by industry_branch_code, payroll_year 
+		AVG (v1),
+		LAG (AVG (v1)) OVER (PARTITION BY industry_branch_code ORDER BY industry_branch_code, payroll_year) as avg_wage_previous_year,
+		AVG (v1) - LAG (AVG (v1)) OVER (PARTITION BY industry_branch_code ORDER BY payroll_year) AS y_o_y_difference,
+		CASE 
+			WHEN AVG (v1) - LAG (AVG (v1)) OVER (PARTITION BY industry_branch_code ORDER BY payroll_year) > 0 THEN 'growth' 
+			ELSE 'decline'
+		END AS wage_development
+	FROM t_jiri_waloschek_projekt_sql_primary_final
+	GROUP BY industry_branch_code, name, payroll_year
+	ORDER BY industry_branch_code, payroll_year 
 )
-select
-	industry_branch_code as odvetvi,
-	name as odvetvi_nazev,
-	count (vyvoj) as pocet_roste
-from porovnani_mezd_1
-where payroll_year between 2001 and 2021 and vyvoj = 'roste' and industry_branch_code is not null and prumerna_mzda_loni is not null
-group by industry_branch_code, name
-order by count(vyvoj) desc
+SELECT
+	industry_branch_code,
+	name AS branch_name,
+	COUNT (wage_development) AS number_of_growth
+FROM wage_comparison
+WHERE payroll_year BETWEEN 2001 AND 2021 
+	AND wage_development = 'growth' 
+	AND industry_branch_code IS NOT NULL 
+	AND avg_wage_previous_year IS NOT NULL
+GROUP BY industry_branch_code, name
+ORDER BY COUNT(wage_development) DESC
