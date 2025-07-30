@@ -5,32 +5,32 @@
 ----- Data o mzdách jsou k dispozici za roky 2000 až 2021 a data o potravinách za roky 2006 až 2018. Srovnávané období je tedy 2007 až 2018.
 ----- Rok 2006 nelze srovnat, nejsou k dispozici data za předchozí rok. 
 
-with mzdy as
+WITH wages AS
 (   
-	select 
-		payroll_year as rok,
-		avg (v1) as prumer_mzda,
-		lag (avg (v1)) over (order by (payroll_year)) as prumer_mzda_loni,
-		round(((avg (v1)-lag (avg (v1)) over (order by (payroll_year)))/lag (avg (v1)) over (order by (payroll_year)) * 100)::numeric, 2) as procenta_mzdy
-	from t_jiri_waloschek_projekt_sql_primary_final
-	--where value_type_code = 5958 and calculation_code = 100 
-	group by payroll_year
-	order by payroll_year 
-), potraviny as
+	SELECT 
+		payroll_year,
+		AVG (v1) AS avg_wage,
+		LAG (AVG (v1)) OVER (ORDER BY (payroll_year)) AS avg_wage_previous_year,
+		ROUND(((AVG (v1)-LAG (AVG (v1)) OVER (ORDER BY (payroll_year)))/LAG (AVG (v1)) OVER (ORDER BY (payroll_year)) * 100)::NUMERIC, 2) AS wage_percentage
+	FROM t_jiri_waloschek_projekt_sql_primary_final
+	GROUP BY payroll_year
+	ORDER BY payroll_year 
+), categories AS
 (
-	select 
-		year as rok2,
-		avg (value) as prum_cen_potr,
-		lag (avg(value)) over (order by (year)) as prum_cen_potr_loni,
-		round(((avg(value)-lag (avg(value)) over (order by (year)))/lag (avg(value)) over (order by ((year))) * 100)::numeric, 2) as procenta_potraviny
-	from t_jiri_waloschek_projekt_sql_primary_final
-	group by rok2
-	order by rok2
+	SELECT 
+		year,
+		AVG (value) AS category_avg_price,
+		LAG (AVG(value)) OVER (ORDER BY (year)) AS category_avg_price_previous_year,
+		ROUND(((AVG(value)-LAG (AVG(value)) OVER (ORDER BY (year)))/LAG (AVG(value)) OVER (ORDER BY ((year))) * 100)::NUMERIC, 2) AS category_percentage
+	FROM t_jiri_waloschek_projekt_sql_primary_final
+	GROUP BY year
+	ORDER BY year
 )
-select 
-	rok,
-	procenta_mzdy,
-	procenta_potraviny,
-	procenta_potraviny - procenta_mzdy as rozdil_procent
-from mzdy
-join potraviny on rok2 = rok;
+SELECT 
+	payroll_year,
+	wage_percentage,
+	category_percentage,
+	category_percentage - wage_percentage AS difference_percentage
+FROM wages w
+JOIN categories c
+	ON c.year = w.payroll_year;
