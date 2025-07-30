@@ -5,26 +5,26 @@
 ----- Data s cenami produktů jsou k dispozici za roky 2006 až 2018.
 ----- Kategorie (212101) Jakostní víno bílé má dostupná data pouze za roky 2015 až 2018 a není uvedena ve výsledné tabulce.
 
-with tabulka_potravin as
+WITH categories AS
 (
-	select 
+	SELECT 
 		year,
 		category_code,
-		nazev_produktu,
-		round(avg (value)::numeric, 2) as prumer,
-		round(lag (avg (value)) over (partition by category_code order by category_code)::numeric, 2) as prumer_predchozi,
-		avg(value) - lag(avg (value)) over (partition by category_code order by category_code, year) as rozdil_prumeru,
-		(avg(value) - lag(avg (value)) over (partition by category_code order by category_code, year)) / lag(avg (value)) over (partition by category_code order by category_code, year) * 100 as procenta
-from t_jiri_waloschek_projekt_sql_primary_final
-where year in (2006, 2018)
-group by category_code, year, nazev_produktu
-order by category_code, year asc
+		product_name,
+		ROUND(AVG (value)::NUMERIC, 2) AS average,
+		ROUND(LAG (AVG (value)) OVER (PARTITION BY category_code ORDER BY category_code)::NUMERIC, 2) AS avg_previous_year,
+		AVG(value) - LAG(AVG (value)) OVER (PARTITION BY category_code ORDER BY category_code, year) AS avg_difference,
+		(AVG(value) - LAG(AVG (value)) OVER (PARTITION BY category_code ORDER BY category_code, year)) / LAG(AVG (value)) OVER (PARTITION BY category_code ORDER BY category_code, year) * 100 AS percentage
+	FROM t_jiri_waloschek_projekt_sql_primary_final
+	WHERE year in (2006, 2018)
+	GROUP BY category_code, year, product_name
+	ORDER BY category_code, year ASC
 )
-select
-	category_code as kategorie_potravin,
-	nazev_produktu as nazev_kategorie,
-	round(procenta::numeric, 2) as procento_zdrazeni
-from tabulka_potravin
-where procenta is not null
-group by category_code, nazev_produktu, procenta 
-order by procenta asc
+SELECT
+	category_code,
+	product_name AS category_name,
+	ROUND(percentage::NUMERIC, 2) AS price_increase_percentage
+FROM categories
+WHERE percentage IS NOT NULL
+GROUP BY category_code, product_name, percentage 
+ORDER BY percentage ASC
