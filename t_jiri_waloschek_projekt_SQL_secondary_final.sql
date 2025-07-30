@@ -1,15 +1,17 @@
-create table t_jiri_waloschek_projekt_SQL_secondary_final as
-with hdp as
+CREATE TABLE t_jiri_waloschek_projekt_SQL_secondary_final AS
+WITH gdp AS
 (
-	select
+	SELECT
 		country, 
 		year,
 		gdp,
 		gini,
 		population
-	from economies e 
-	where year between 2006 and 2018
-	group by year, country, gdp, gini, population
-	order by country, year
+	FROM economies e 
+	WHERE year BETWEEN 2006 AND 2018
+	GROUP BY year, country, gdp, gini, population
+	ORDER BY country, year
 )
-select * from hdp
+SELECT 
+	* 
+FROM gdp
