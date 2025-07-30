@@ -4,44 +4,46 @@
 ----- Závislost cen potravin na GDP není jednoznačná, mezi lety 2007 až 2011 lze vidět pozitivní korelaci, ale v letech 2012 až 2016 negativní. S klesajícím GDP nejprve rostou ceny potravin a následně se zvyšujícím se GDP ceny potravin klesají.
 ----- Data o mzdách jsou k dispozici za roky 2000 až 2021, data o potravinách za roky 2006 až 2018 a ekonomické údaje státu (ČR) za roky 1990 až 2020. Srovnávané období je tedy 2007 až 2018. Rok 2006 nelze srovnat, nejsou k dispozici data o cenách potravin za předchozí rok.
 
-with mzdy as
+WITH wages AS
 (   
-	select 
-		payroll_year as rok,
-		round (avg (v1)) as prumer_mzda,
-		lag (avg (v1)) over (order by (payroll_year)) as prumer_mzda_loni,
-		(round (avg (v1)) - lag (avg (v1)) over (order by (payroll_year))) as rozdil_mezd,
-		round(((avg (v1)-lag (avg (v1)) over (order by (payroll_year)))/lag (avg (v1)) over (order by (payroll_year)) * 100)::numeric, 2) as procenta_mzdy
-	from t_jiri_waloschek_projekt_sql_primary_final
-	group by payroll_year
-	order by payroll_year 
-), potraviny as
+	SELECT 
+		payroll_year,
+		ROUND (AVG (v1)) AS avg_wage,
+		LAG (AVG (v1)) OVER (ORDER BY (payroll_year)) AS avg_wage_previous_year,
+		(ROUND (AVG (v1)) - LAG (AVG (v1)) OVER (ORDER BY (payroll_year))) AS wage_difference,
+		ROUND(((AVG (v1)-LAG (AVG (v1)) OVER (ORDER BY (payroll_year)))/LAG (AVG (v1)) OVER (ORDER BY (payroll_year)) * 100)::NUMERIC, 2) AS wage_development_percentage
+	FROM t_jiri_waloschek_projekt_sql_primary_final
+	GROUP BY payroll_year
+	ORDER BY payroll_year 
+), categories AS
 (
-	select 
-		year as rok2,
-		avg (value) as prum_cen_potr,
-		lag (avg(value)) over (order by (year)) as prum_cen_potr_loni,
-		round(((avg(value)-lag (avg(value)) over (order by (year)))/lag (avg(value)) over (order by (year)) * 100)::numeric, 2) as procenta_potr
-	from t_jiri_waloschek_projekt_sql_primary_final
-	group by rok2
-	order by rok2
-), gdp as 
+	SELECT 
+		year as year2,
+		AVG (value) AS category_avg_price,
+		LAG (AVG(value)) OVER (ORDER BY (year)) AS category_avg_price_previous_year,
+		ROUND(((AVG(value)-LAG (AVG(value)) OVER (ORDER BY (year)))/LAG (AVG(value)) OVER (ORDER BY (year)) * 100)::NUMERIC, 2) AS category_development_percentage
+	FROM t_jiri_waloschek_projekt_sql_primary_final
+	GROUP BY year2
+	ORDER BY year2
+), gdp AS 
 (
-	select
+	SELECT
 		year,
 		gdp,
 		country,
-		lag(gdp) over (order by (year)),
-		round(((gdp - (lag(gdp) over (order by year asc)))/(lag(gdp) over (order by year asc)) * 100)::numeric, 2) as vyvoj_gdp_proc
-	from t_jiri_waloschek_projekt_SQL_secondary_final
-	where country = 'Czech Republic'
-	group by year, country, gdp
+		LAG(gdp) OVER (ORDER BY (year)),
+		ROUND(((gdp - (LAG(gdp) OVER (ORDER BY year ASC)))/(LAG(gdp) OVER (ORDER BY year ASC)) * 100)::NUMERIC, 2) AS gdp_development_percentage
+	FROM t_jiri_waloschek_projekt_SQL_secondary_final
+	WHERE country = 'Czech Republic'
+	GROUP BY year, country, gdp
 )
-	select 
-		rok,
-		procenta_mzdy,
-		procenta_potr,
-		vyvoj_gdp_proc
-	from mzdy
-	join potraviny on rok2 = rok
-	join gdp on rok2 = year
+SELECT 
+	year,
+	wage_development_percentage,
+	category_development_percentage,
+	gdp_development_percentage
+FROM wages w
+JOIN categories c
+	ON c.year2 = w.payroll_year
+JOIN gdp 
+	ON c.year2 = gdp.year
