@@ -13,7 +13,7 @@ WITH avg_prices AS
 		ROUND(AVG(value)::NUMERIC, 2) AS avg_price
 		FROM t_jiri_waloschek_projekt_sql_primary_final
 	WHERE category_code IN (111301, 114201) 
-		AND year in (2006, 2018)
+		AND year IN (2006, 2018)
 	GROUP BY year, category_code, product_name	
 	ORDER BY year
 ), avg_wages AS 
@@ -22,14 +22,14 @@ WITH avg_prices AS
 		payroll_year,
 		AVG(v1) AS avg_wage
 		FROM t_jiri_waloschek_projekt_sql_primary_final
-	WHERE payroll_year in (2006, 2018)
+	WHERE payroll_year IN (2006, 2018)
 	GROUP BY payroll_year
 	ORDER BY payroll_year 
 )
 SELECT 
 	year,
 	category_code,
-	product_name as category_name,
+	product_name AS category_name,
 	avg_price,
 	avg_wage,
 	ROUND((avg_wage / avg_price)::NUMERIC, 2) AS result
